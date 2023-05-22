@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -44,9 +45,9 @@ class ProjectController extends Controller
         $newProject = new Project();
         $newProject->title = $form_data['title'];
         $newProject->content = $form_data['content'];
-        $newProject->slug = $form_data['slug'];
+        $newProject->slug = Str::slug($newProject->title, '-');
         $newProject->save();
-        return redirect()->route('admin.projects.show', ['project' => $newProject->slug]);
+        return redirect()->route('admin.projects.show', ['project' => $newProject->id]);
     }
 
     /**
@@ -55,9 +56,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($id)
     {
-        $project = Project::findOrFail($slug);
+        $project = Project::findOrFail($id);
         return view('admin.projects.show', compact('project'));
     }
 
@@ -67,9 +68,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($slug)
-    {
-        return view('admin.project.edit', compact('project'));
+    public function edit($id)
+    {   
+        $project = Project::findOrFail($id);
+        return view('admin.projects.edit', compact('project'));
     }
 
     /**
@@ -79,13 +81,12 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $slug)
-    {
-        $project = Project::findOrFail($slug);
-         
-         $form_data = $request->all();
-         $project->update($form_data);
-        return redirect()->route('admin.project.show', ['project' => $project->slug]);
+    public function update(Request $request, $id)
+    {   
+        $project = Project::findOrFail($id); 
+        $form_data = $request->all();
+        $project->update($form_data);
+        return redirect()->route('admin.projects.show', ['project' => $project->id]);
     }
 
     /**
@@ -94,9 +95,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($slug)
-    {
+    public function destroy($id)
+    {   
+        $project = Project::findOrFail($id);
         $project->delete();
-        return redirect()->route('admin.project.index');
+        return redirect()->route('admin.projects.index');
     }
 }
