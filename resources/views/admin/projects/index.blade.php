@@ -18,9 +18,9 @@
                 <td>{{$project->title}}</td>
                 <td>{{$project->slug}}</td>
                 <td class="d-flex">
-                  <a class="btn btn-primary me-3" href="{{route('admin.crudprojects.show', ['project' => $project->slug])}}">Dettagli</a>
-                  <a class="btn btn-secondary me-3" href="{{route('admin.crudprojects.edit', ['project' => $project->slug])}}">Modifica</a>
-                  <form action="{{route('admin.crudprojects.destroy', ['project' => $project->slug])}}" method="POST">
+                  <a class="btn btn-primary me-3" href="{{route('admin.projects.show', ['project' => $project->slug])}}">Dettagli</a>
+                  <a class="btn btn-secondary me-3" href="{{route('admin.projects.edit', ['project' => $project->slug])}}">Modifica</a>
+                  <form action="{{route('admin.projects.destroy', ['project' => $project->slug])}}" method="POST">
                       @csrf
                       @method('DELETE')
                       <!--onclick="return confirm('Are you sure?')"-->
