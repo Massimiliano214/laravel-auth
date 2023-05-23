@@ -47,7 +47,7 @@ class ProjectController extends Controller
         $newProject->content = $form_data['content'];
         $newProject->slug = Str::slug($newProject->title, '-');
         $newProject->save();
-        return redirect()->route('admin.projects.show', ['project' => $newProject->id]);
+        return redirect()->route('admin.projects.show', ['project' => $newProject->slug]);
     }
 
     /**
@@ -56,9 +56,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Project $project)
     {
-        $project = Project::findOrFail($id);
+        
         return view('admin.projects.show', compact('project'));
     }
 
@@ -68,9 +68,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Project $project)
     {   
-        $project = Project::findOrFail($id);
+        //$project = Project::findOrFail($id);
         return view('admin.projects.edit', compact('project'));
     }
 
@@ -81,12 +81,16 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Project $project)
     {   
-        $project = Project::findOrFail($id); 
+        //$project = Project::findOrFail($id); 
         $form_data = $request->all();
+        
+        //$form_data = $request->validated();
+        
         $project->update($form_data);
-        return redirect()->route('admin.projects.show', ['project' => $project->id]);
+        
+        return redirect()->route('admin.projects.show', ['project' => $project->slug]);
     }
 
     /**
@@ -95,9 +99,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Project $project)
     {   
-        $project = Project::findOrFail($id);
+        //$project = Project::findOrFail($id);
         $project->delete();
         return redirect()->route('admin.projects.index');
     }

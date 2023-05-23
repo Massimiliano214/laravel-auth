@@ -6,7 +6,7 @@
 
     <div class="container py-5">
 
-        <form method="POST" action="{{route('admin.projects.update', ['project' => $project->id])}}">
+        <form method="POST" action="{{route('admin.projects.update', ['project' => $project->slug])}}">
            
             @csrf
 
@@ -18,7 +18,7 @@
 
                 @error('title')
                     <div class="invalid-feedback">
-                        {{ Str::slug($newProject->title, '-') }}
+                        {{ $message }}
                     </div>
                 @enderror
             </div>
