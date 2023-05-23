@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 
 class ProjectController extends Controller
 {
@@ -39,15 +41,27 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(StoreProjectRequest $request)
+    {      
+        /*
         $form_data = $request->all();
         $newProject = new Project();
         $newProject->title = $form_data['title'];
         $newProject->content = $form_data['content'];
         $newProject->slug = Str::slug($newProject->title, '-');
         $newProject->save();
-        return redirect()->route('admin.projects.show', ['project' => $newProject->slug]);
+        */
+
+        $validated_data = $request->validated();
+        $validated_data['slug'] = Project::generateSlug($request->title);
+
+        $checkProject = Project::where('slug', $validated_data['slug'])->first();
+        if ($checkProject) {
+            return back()->withInput()->withErrors(['slug' => 'Impossibile creare il Progetto col seguente titolo.']);
+        }
+        $newProject = Project::create($validated_data);
+
+        return redirect()->route('admin.projects.show', ['project' => $newProject->slug])->with('status', 'Progetto creato con successo!');
     }
 
     /**
@@ -81,16 +95,26 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {   
+        /*
         //$project = Project::findOrFail($id); 
         $form_data = $request->all();
         
         //$form_data = $request->validated();
         
         $project->update($form_data);
-        
-        return redirect()->route('admin.projects.show', ['project' => $project->slug]);
+        */
+    
+        $validated_data = $request->validated();
+        $validated_data['slug'] = Project::generateSlug($request->title);
+
+        $checkProject = Project::where('slug', $validated_data['slug'])->where('id', '<>', $post->id)->first();
+        if ($checkProject) {
+            return back()->withInput()->withErrors(['slug' => 'Impossibile aggiornare il Progetto col seguente titolo.']);
+        }
+        $project->update($validated_data);
+        return redirect()->route('admin.projects.show', ['project' => $project->slug])->with('status', 'Progetto modificato con successo!');
     }
 
     /**
